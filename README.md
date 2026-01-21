@@ -9,6 +9,8 @@
     <strong>The awesome collection of Claude Skills with official and community-built resources.
     </strong>
     <br />
+    [<a href="./README_CN.md">中文</a>]
+    <br />
     <br />
 
 </div>
@@ -76,6 +78,13 @@ See the [official repo](https://github.com/anthropics/skills) and [creation guid
 | GitHub Copilot | `.github/skills/` | `~/.copilot/skills/` | [Copilot Skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) |
 | OpenCode | `.opencode/skills/` | `~/.config/opencode/skills/` | [OpenCode Skills](https://opencode.ai/docs/skills) |
 | Windsurf | `.windsurf/skills/` | `~/.codeium/windsurf/skills/` | [Windsurf Cascade Skills](https://docs.windsurf.com/windsurf/cascade/skills) |
+
+### Using with Trae and Qoder
+
+While **Trae** and **Qoder** primarily use a "Rules" system rather than the directory-based "Skills" standard, you can still leverage these resources:
+
+- **Trae**: Trae uses `.rules` files for context. You can adapt a skill by copying its instructions (the content of `SKILL.md`) into `.trae/project_rules.md` (for project-specific skills) or `user_rules.md` (for global skills). Configure this via **Settings > Rules**.
+- **Qoder**: Qoder uses `.qoder/rules` to optimize model behavior. You can place the skill's instructions into a rule file within `.qoder/rules/` or use the **Repo Wiki** feature to make the skill's documentation available to the agent.
 
 <br/>
 
