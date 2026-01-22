@@ -118,3 +118,56 @@ To get the weather, you must execute the python script located in this skill's d
 2.  **描述清晰**: `description` 字段决定了 AI 是否会加载该 Skill，务必准确简洁。
 3.  **鲁棒性**: 在 `SKILL.md` 中明确告诉 AI 如何处理错误（如脚本报错、参数缺失）。
 4.  **无状态**: 脚本最好是无状态的，或者状态由外部（如文件/数据库）管理，方便 AI 反复调用。
+
+---
+
+## 5. 环境依赖与跨平台挑战
+
+正如你所观察到的，Skill 的执行极度依赖宿主机的系统环境。这在涉及本地应用交互（如 PowerPoint, Word）时尤为明显。
+
+### 为什么会不同？
+
+Skill 本质上是在终端执行命令，因此它继承了所有操作系统的差异性：
+
+*   **系统命令差异**: Windows 使用 `dir` 和 `type`，而 macOS/Linux 使用 `ls` 和 `cat`。
+*   **文件路径格式**: Windows 使用反斜杠 `\`，macOS/Linux 使用正斜杠 `/`。
+*   **应用接口 (API)**:
+    *   **Windows**: Microsoft Office 提供了强大的 **COM/OLE 自动化接口**，Python 库如 `pywin32` 可以深度控制 Word/PPT。
+    *   **macOS**: Office 自动化通常依赖 **AppleScript**，功能覆盖率不如 Windows 的 COM 接口全面。
+    *   **Linux**: 通常没有原生 Office，可能需要调用 LibreOffice 的无头模式 (Headless Mode) 或使用纯 Python 库（如 `python-docx`, `python-pptx`）直接操作文件二进制，而不是操作运行中的 App。
+
+### 解决方案
+
+在开发 Skill 时，你有三种策略来应对这种差异：
+
+#### 策略 A：纯 Python 库（推荐）
+尽量不依赖已安装的 App，而是直接操作文件。
+*   *场景*: 生成一个 PPT。
+*   *做法*: 使用 `python-pptx` 库生成 `.pptx` 文件。
+*   *优点*: 跨平台兼容性极好（Win/Mac/Linux 都能跑），无需安装 Office。
+
+#### 策略 B：环境检测
+在脚本中判断当前系统，执行不同的逻辑。
+
+```python
+import platform
+
+system = platform.system()
+if system == "Windows":
+    # 使用 pywin32 调用 COM 接口
+    pass
+elif system == "Darwin": # macOS
+    # 使用 osascript 调用 AppleScript
+    pass
+else:
+    print("Error: This skill does not support Linux.")
+```
+
+#### 策略 C：明确声明依赖
+如果你的 Skill 必须依赖特定平台的特性（例如“控制当前正在播放的 PPT 翻页”），请在 `SKILL.md` 中明确标注。
+
+```markdown
+# PowerPoint Controller
+> **Warning**: This skill requires Windows 10/11 and Microsoft PowerPoint installed.
+```
+
